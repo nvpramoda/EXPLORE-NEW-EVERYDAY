@@ -1,0 +1,137 @@
+Code for Manual Control 
+IoT based Green House controlling and monetering 
+#define BLYNK_PRINT Serial
+#include <ESP8266_Lib.h>
+#include <BlynkSimpleShieldEsp8266.h>
+#include <DHT.h>
+// You should get Auth Token in the Blynk App.
+// Go to the Project Settings (nut icon).
+char auth[] = "545f5e11253d4ce483377c8ef76b1ac6";
+// WiFi credentials.
+// Set password to "" for open networks.
+char ssid[] = "NAME";
+char pass[] = "12345678";
+// Hardware Serial on Mega, Leonardo, Micro...
+#define EspSerial Serial1
+// Your ESP8266 baud rate:
+#define ESP8266_BAUD 115200
+ESP8266 wifi(&EspSerial);
+#define DHTPIN 2          // What digital pin we're connected to
+#define lightintensity A0
+#define soilmoisture A1
+#define colevel A2
+#define DHTTYPE DHT11     // DHT 11
+DHT dht(DHTPIN, DHTTYPE);
+BlynkTimer timer;
+// This function sends Arduino's up time every second to Virtual Pin (5).
+// In the app, Widget's reading frequency should be set to PUSH. This means
+// that you define how often to send data to Blynk App.
+void sendSensor()
+{
+  float h = dht.readHumidity();
+  float t = dht.readTemperature(); // or dht.readTemperature(true) for Fahrenheit
+  int li=analogRead(A0);
+  int sm=analogRead(A1);
+  int co=analogRead(A2);
+  if (isnan(h) || isnan(t)) {
+    Serial.println("Failed to read from DHT sensor!");
+    return;
+  }
+  // You can send any value at any time.
+  // Please don't send more that 10 values per second.
+  Blynk.virtualWrite(V5, h);
+  Blynk.virtualWrite(V6, t);
+  Blynk.virtualWrite(V7, li);
+  Blynk.virtualWrite(V8, sm);
+  Blynk.virtualWrite(V10, co);
+}
+void setup()
+{
+  // Debug console
+  Serial.begin(9600);
+  // Set ESP8266 baud rate
+  EspSerial.begin(ESP8266_BAUD);
+  delay(10);
+  Blynk.begin(auth, wifi, ssid, pass);
+   dht.begin();
+// Setup a function to be called every second
+  timer.setInterval(1000L, sendSensor);
+}
+void loop()
+{
+  Blynk.run();
+  Blynk.run();
+  Blynk.run();
+  Blynk.run();
+  Blynk.run();
+  Blynk.run();
+  Blynk.run();
+  Blynk.run();
+  timer.run();
+}
+Code to Display Value on the Serial Monitor 
+#include <dht.h>
+#define dataPin 2
+dht DHT;
+void setup()
+{
+  Serial.begin(9600);
+}
+void loop()
+{
+  int readData = DHT.read11(dataPin);
+  float h = DHT.humidity;
+  float t = DHT.temperature;
+  delay(1000);
+    int soilmoisture = analogRead(A0);
+  int lightintensity = analogRead(A1);
+  int COlevel = analogRead(A2); 
+  Serial.print("Temperature = ");
+  Serial.println(DHT.temperature);
+  Serial.print("Humidity = ");
+  Serial.println(DHT.humidity);
+  Serial.print("Soil Moisture = ");
+  Serial.println(soilmoisture);
+  Serial.print("Light Intensity = ");
+  Serial.println(lightintensity);
+  Serial.print("CO Level = ");
+  Serial.println(COlevel);
+  Serial.print('\n');
+  delay(1000);
+}
+
+Code for Soil Moisture Sensor 
+void setup() {
+// initialize serial communication at 9600 bits per second:
+Serial.begin(9600);
+}
+
+
+void loop() 
+{
+// read the input on analog pin 0:
+int sensorValue = analogRead(A0); 
+Serial.println(sensorValue);
+delay(100);
+}
+Code for DHT Sensor 
+#include <dht.h>
+
+dht DHT;
+
+#define DHT11_PIN 7
+
+void setup(){
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  int chk = DHT.read11(DHT11_PIN);
+  Serial.print("Temperature = ");
+  Serial.println(DHT.temperature);
+  Serial.print("Humidity = ");
+  Serial.println(DHT.humidity);
+  delay(1000);
+}
+
