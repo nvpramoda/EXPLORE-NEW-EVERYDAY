@@ -1,4 +1,4 @@
-Code for Manual Control 
+Code for grennhouse automation Control 
 IoT based Green House controlling and monetering 
 #define BLYNK_PRINT Serial
 #include <ESP8266_Lib.h>
